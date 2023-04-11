@@ -1,19 +1,13 @@
 import React, { useEffect, useRef } from "react";
-import GridEngine from "grid-engine";
 import Phaser from 'phaser';
 import './App.css';
+import GridEngineExtension from "./GridEngineExtension";
 
 import tileset from "./assets/v2.png"
 import mapJson from "./assets/GPTRPGMap.json"
 import characters from "./assets/characters.png"
 
 const socket = new WebSocket('ws://localhost:8080');
-
-// socket.addEventListener('open', () => {
-//   console.log('Connected to WebSocket server');
-// });
-
-
 
 const preload = function () {
   this.load.image("tiles", tileset, {
@@ -62,9 +56,8 @@ const create = function () {
   this.plantLayer = this.add.container();
 
   this.gridEngine.create(this.fieldMapTileMap, gridEngineConfig);
-
-  this.gridEngine.create(this.fieldMapTileMap, gridEngineConfig);
   
+  // Create walkable tiles bridge
   this.gridEngine.setTransition({ x: 10, y: 26 }, 'ground', 'bridge');
   this.gridEngine.setTransition({ x: 10, y: 39 }, 'bridge', 'ground');
   this.gridEngine.setTransition({ x: 11, y: 26 }, 'ground', 'bridge');
@@ -72,8 +65,16 @@ const create = function () {
   this.gridEngine.setTransition({ x: 9, y: 26 }, 'ground', 'bridge');
   this.gridEngine.setTransition({ x: 9, y: 39 }, 'bridge', 'ground');
 
-  this.gridEngine.movementStopped().subscribe((stopper) => {
+  // Listen to events from the server
+  socket.addEventListener('message', (event) => {
+    console.log('Getting message')
+    const res = JSON.parse(event.data);
+    this.gridEngine.moveAndCheckCollision(res.action.direction, this.fieldMapTileMap, socket);
+    this.gridEngine.move("player", res.action.direction);
+  });
 
+  this.gridEngine.movementStopped().subscribe((stopper) => {
+    console.log('movement stopped')
     const playerPosition = this.gridEngine.getPosition("player");
     const { x: playerX, y: playerY } = playerPosition;
   
@@ -108,24 +109,14 @@ const create = function () {
   
     socket.send(JSON.stringify({ type: 'movementStopped', charId: stopper.charId, surroundings: surroundings }));
 
-    const gridEngine = this.gridEngine;
-    socket.addEventListener('message', (event) => {
-      const res = JSON.parse(event.data);
-      // NEED TO USE moveAndCheckCollision HERE
-      gridEngine.move("player", res.action.direction);
-    });
-  });
 
+  });
   // EXPOSE TO EXTENSION
   window.__GRID_ENGINE__ = this.gridEngine;
 };
 
 const update = function () {
   const cursors = this.input.keyboard.createCursorKeys();
-
-
-  const playerPosition = this.gridEngine.getPosition("player");
-  const { x: playerX, y: playerY } = playerPosition;
 
   const addPlantKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
   const removePlantKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
@@ -181,51 +172,15 @@ const update = function () {
       plant.destroy();
     });
   }
-
-  const moveAndCheckCollision = (direction) => {
-    const currentPosition = this.gridEngine.getPosition("player");
-    let nextPosition = { ...currentPosition };
-  
-    switch (direction) {
-      case "left":
-        nextPosition.x -= 1;
-        break;
-      case "right":
-        nextPosition.x += 1;
-        break;
-      case "up":
-        nextPosition.y -= 1;
-        break;
-      case "down":
-        nextPosition.y += 1;
-        break;
-      default:
-        break;
-    }
-  
-    // Check if the next position has a tile with the 'ge_collide' property set to true
-    const collision = this.fieldMapTileMap.layers.some((layer) => {
-      const tile = layer.tilemapLayer.getTileAt(nextPosition.x, nextPosition.y);
-      return tile && tile.properties.ge_collide;
-    });
-  
-    if (collision) {
-      console.log('ruh roh')
-      socket.send(JSON.stringify({ type: 'movementStopped', charId: 1, surroundings: {} }));
-      // Request the next action from the server here
-    } else {
-      this.gridEngine.move("player", direction);
-    }
-  };
   
   if (cursors.left.isDown) {
-    moveAndCheckCollision("left");
+    this.gridEngine.moveAndCheckCollision("left", this.fieldMapTileMap, socket);
   } else if (cursors.right.isDown) {
-    moveAndCheckCollision("right");
+    this.gridEngine.moveAndCheckCollision("right", this.fieldMapTileMap, socket);
   } else if (cursors.up.isDown) {
-    moveAndCheckCollision("up");
+    this.gridEngine.moveAndCheckCollision("up", this.fieldMapTileMap, socket);
   } else if (cursors.down.isDown) {
-    moveAndCheckCollision("down");
+    this.gridEngine.moveAndCheckCollision("down", this.fieldMapTileMap, socket);
   }
   
 };
@@ -248,7 +203,7 @@ function App() {
           scene: [
             {
               key: "gridEngine",
-              plugin: GridEngine,
+              plugin: GridEngineExtension,
               mapping: "gridEngine",
             },
           ],

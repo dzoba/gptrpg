@@ -31,7 +31,7 @@ wss.on('connection', function connection(ws) {
         }
       `
 
-      const completion = await callOpenAI(prompt);
+      const completion = await callOpenAI(prompt, 0);
 
       console.log('completion', completion);
 
@@ -47,7 +47,33 @@ wss.on('connection', function connection(ws) {
   ws.send('something');
 });
 
-async function callOpenAI(prompt) {
+async function callOpenAI(prompt, attempt) {
+  if (attempt > 3) {
+    return null;
+  }
+
+  // Fake openai response delayed by 1 second
+  // const response = await new Promise((resolve) => {
+  //   setTimeout(() => {
+  //     resolve({
+  //       data: {
+  //         choices: [
+  //           {
+  //             message: {
+  //               content: `{
+  //                 "action": {
+  //                   "type": "move",
+  //                   "direction": "up"
+  //                 }
+  //               }`
+  //             }
+  //           }
+  //         ]
+  //       }
+  //     })
+  //   }, 1000)
+  // })
+
   const response = await openai.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: [{ role: "user", content: prompt }],
@@ -58,7 +84,7 @@ async function callOpenAI(prompt) {
     return responseObject;
   }
 
-  return await callOpenAI(prompt);
+  return await callOpenAI(prompt, attempt + 1);
 }
 
 function cleanAndProcess(text) {
