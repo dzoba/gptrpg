@@ -106,21 +106,14 @@ const create = function () {
       });
     });
   
-    console.log(surroundings);
-
-
     socket.send(JSON.stringify({ type: 'movementStopped', charId: stopper.charId, surroundings: surroundings }));
 
     const gridEngine = this.gridEngine;
     socket.addEventListener('message', (event) => {
-      console.log(`Received message from server: ${event.data}`);
-      const res = JSON.parse(JSON.parse(event.data));
-      console.log(res)
-      console.log(res.action)
+      const res = JSON.parse(event.data);
+      // NEED TO USE moveAndCheckCollision HERE
       gridEngine.move("player", res.action.direction);
     });
-
-
   });
 
   // EXPOSE TO EXTENSION
@@ -136,6 +129,11 @@ const update = function () {
 
   const addPlantKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
   const removePlantKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+  const randomDestinationKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
+
+  if(randomDestinationKey.isDown) {
+    this.gridEngine.moveTo("player", { x: 15, y: 18 });
+  }
 
   if (addPlantKey.isDown) {
     const playerPosition = this.gridEngine.getPosition("player");
@@ -184,15 +182,52 @@ const update = function () {
     });
   }
 
+  const moveAndCheckCollision = (direction) => {
+    const currentPosition = this.gridEngine.getPosition("player");
+    let nextPosition = { ...currentPosition };
+  
+    switch (direction) {
+      case "left":
+        nextPosition.x -= 1;
+        break;
+      case "right":
+        nextPosition.x += 1;
+        break;
+      case "up":
+        nextPosition.y -= 1;
+        break;
+      case "down":
+        nextPosition.y += 1;
+        break;
+      default:
+        break;
+    }
+  
+    // Check if the next position has a tile with the 'ge_collide' property set to true
+    const collision = this.fieldMapTileMap.layers.some((layer) => {
+      const tile = layer.tilemapLayer.getTileAt(nextPosition.x, nextPosition.y);
+      return tile && tile.properties.ge_collide;
+    });
+  
+    if (collision) {
+      console.log('ruh roh')
+      socket.send(JSON.stringify({ type: 'movementStopped', charId: 1, surroundings: {} }));
+      // Request the next action from the server here
+    } else {
+      this.gridEngine.move("player", direction);
+    }
+  };
+  
   if (cursors.left.isDown) {
-    this.gridEngine.move("player", "left");
+    moveAndCheckCollision("left");
   } else if (cursors.right.isDown) {
-    this.gridEngine.move("player", "right");
+    moveAndCheckCollision("right");
   } else if (cursors.up.isDown) {
-    this.gridEngine.move("player", "up");
+    moveAndCheckCollision("up");
   } else if (cursors.down.isDown) {
-    this.gridEngine.move("player", "down");
+    moveAndCheckCollision("down");
   }
+  
 };
 
 function App() {

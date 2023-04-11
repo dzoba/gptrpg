@@ -1,0 +1,59 @@
+{
+  "name": "extract-json-from-string",
+  "description": "Extract JSON/javascript objects from strings",
+  "version": "1.0.1",
+  "main": "lib/extract-json-from-string.js",
+  "scripts": {
+    "test": "gulp",
+    "cover": "nyc --reporter=html --reporter=lcov --reporter=text-summary mocha --timeout=3000 --reporter=dot test/**/*.js",
+    "travis": "gulp ci",
+    "codeclimate": "codeclimate-test-reporter < coverage/lcov-report/index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tandrewnichols/extract-json-from-string.git"
+  },
+  "keywords": [
+    "JSON",
+    "objects",
+    "extract",
+    "find",
+    "braces",
+    "matching"
+  ],
+  "author": {
+    "name": "Andrew Nichols",
+    "email": "tandrewnichols@gmail.com",
+    "url": "www.tandrewnichols.me"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tandrewnichols/extract-json-from-string/issues"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "homepage": "https://github.com/tandrewnichols/extract-json-from-string",
+  "dependencies": {},
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "eslint-codeframe-formatter": "^1.0.2",
+    "file-manifest": "^2.0.4",
+    "gulp": "github:gulpjs/gulp#4.0",
+    "gulp-codeclimate-reporter": "github:tandrewnichols/gulp-codeclimate-reporter",
+    "gulp-eslint": "^4.0.0",
+    "gulp-open": "^2.1.0",
+    "karma": "^2.0.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-mocha": "^1.3.0",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "karma-webpack": "^2.0.9",
+    "mocha": "^4.0.1",
+    "nyc": "^11.4.1",
+    "rimraf": "^2.6.2",
+    "should": "^13.1.3",
+    "webpack": "^3.10.0"
+  }
+}
