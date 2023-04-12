@@ -14,12 +14,13 @@ wss.on('connection', function connection(ws) {
   ws.on('error', console.error);
 
   ws.on('message', async function message(data) {
-    console.log('new message', data)
+    const parsedData = JSON.parse(data);
+    console.log('new message ', parsedData.surroundings)
     try {
       const prompt = `You are simulating an agent existing in a 2 Dimensional world. You can move up, down, left, and right. You are given a description of your nearby surroundings.  The world extends farther than these surroundings.
         Here is a description of your surroundings:
 
-        ${data.surroundings}
+        ${parsedData.surroundings}
 
         Provide your next action in the form of a JSON object with the following properties:
 
@@ -32,8 +33,6 @@ wss.on('connection', function connection(ws) {
       `
 
       const completion = await callOpenAI(prompt, 0);
-
-      console.log('completion', completion);
 
       wss.clients.forEach(function each(client) {
         client.send(JSON.stringify(completion));

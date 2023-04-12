@@ -67,49 +67,54 @@ const create = function () {
 
   // Listen to events from the server
   socket.addEventListener('message', (event) => {
-    console.log('Getting message')
     const res = JSON.parse(event.data);
     this.gridEngine.moveAndCheckCollision(res.action.direction, this.fieldMapTileMap, socket);
     this.gridEngine.move("player", res.action.direction);
   });
 
   this.gridEngine.movementStopped().subscribe((stopper) => {
-    console.log('movement stopped')
-    const playerPosition = this.gridEngine.getPosition("player");
+    console.log('movement stopped');
+    const playerPosition = this.gridEngine.getPosition('player');
     const { x: playerX, y: playerY } = playerPosition;
   
-    // Define the size of the square
-    const size = 6;
+    const surroundings = {
+      up: 'walkable',
+      down: 'walkable',
+      left: 'walkable',
+      right: 'walkable'
+    };
   
-    // Get the bounds of the rectangle around the player
-    const rect = new Phaser.Geom.Rectangle(
-      playerX - size / 2,
-      playerY - size / 2,
-      size,
-      size
-    );
-
-    const surroundings = {}
+    const directions = [
+      { key: 'up', dx: 0, dy: -1 },
+      { key: 'down', dx: 0, dy: 1 },
+      { key: 'left', dx: -1, dy: 0 },
+      { key: 'right', dx: 1, dy: 0 }
+    ];
   
-    // Get the tiles within the rectangle
     this.fieldMapTileMap.layers.forEach((layer) => {
       const tilemapLayer = layer.tilemapLayer;
   
-      const layerTiles = tilemapLayer.getTilesWithin(rect.x, rect.y, rect.width, rect.height);
+      directions.forEach((direction) => {
+        const tile = tilemapLayer.getTileAt(
+          playerX + direction.dx,
+          playerY + direction.dy
+        );
   
-      layerTiles.forEach(tile => {
-        surroundings[tile.x] = surroundings[tile.x] || {}
-        // If we have found a tile with the same x and y coordinates, and ge_collide is already true, ignore
-        if(surroundings[tile.x][tile.y]?.properties.ge_collide) return;
-
-        // Otherwise, set the ge_collide property to true
-        surroundings[tile.x][tile.y] = { properties: tile.properties }
+        if (tile && tile.properties.ge_collide) {
+          surroundings[direction.key] = 'wall';
+        }
       });
     });
   
-    socket.send(JSON.stringify({ type: 'movementStopped', charId: stopper.charId, surroundings: surroundings }));
+    console.log('surroundings', surroundings)
 
-
+    socket.send(
+      JSON.stringify({
+        type: 'movementStopped',
+        charId: stopper.charId,
+        surroundings: surroundings
+      })
+    );
   });
   // EXPOSE TO EXTENSION
   window.__GRID_ENGINE__ = this.gridEngine;
