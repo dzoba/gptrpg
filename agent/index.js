@@ -17,19 +17,37 @@ wss.on('connection', function connection(ws) {
     const parsedData = JSON.parse(data);
     console.log('new message ', parsedData.surroundings)
     try {
-      const prompt = `You are simulating an agent existing in a 2 Dimensional world. You can move up, down, left, and right. You are given a description of your nearby surroundings.  The world extends farther than these surroundings.
-        Here is a description of your surroundings:
+      const prompt = `# Introduction
 
-        ${parsedData.surroundings}
-
-        Provide your next action in the form of a JSON object with the following properties:
-
-        {
-          action: {
-            type: "move",
-            direction: "up" | "down" | "left" | "right"
-          }
+      You are acting as an agent living in a simulated 2 dimensional universe. Your job is to exist as best as you see fit.
+      
+      # Capabilities
+      
+      You have a limited set of capabilities. They are listed below:
+      
+      * Move
+      * Wait
+      
+      # Responses
+      
+      You must supply your responses in the form of valid JSON objects.  Your responses will specify which of the above actions you intend to take.  The following is an example of a valid response:
+      
+      {
+        action: {
+          type: "move",
+          direction: "up" | "down" | "left" | "right"
         }
+      }
+      
+      # Perceptions
+      
+      You will have access to data to help you make your decisions on what to do next.
+      
+      For now, this is the information you have access to:
+
+      ${JSON.stringify(parsedData.surroundings)}
+
+      The JSON response indicating the next move is:
       `
 
       const completion = await callOpenAI(prompt, 0);
@@ -50,6 +68,12 @@ async function callOpenAI(prompt, attempt) {
   if (attempt > 3) {
     return null;
   }
+
+  if (attempt > 0) {
+    prompt = "YOU MUST ONLY RESPOND WITH VALID JSON OBJECTS\N" + prompt;
+  }
+
+  console.log('Calling OpenAI', attempt)
 
   // Fake openai response delayed by 1 second
   // const response = await new Promise((resolve) => {
@@ -77,6 +101,8 @@ async function callOpenAI(prompt, attempt) {
     model: "gpt-3.5-turbo",
     messages: [{ role: "user", content: prompt }],
   });
+
+  console.log('OpenAI response', response.data.choices[0].message.content)
 
   const responseObject = cleanAndProcess(response.data.choices[0].message.content);
   if (responseObject) {
