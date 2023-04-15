@@ -7,9 +7,6 @@ import preload from './preload';
 import create from './create';
 import update from './update';
 
-import Agent from './Agent';
-const agent = new Agent();
-
 function App() {
   const gameRef = useRef(null);
 
@@ -34,16 +31,9 @@ function App() {
           ],
         },
         scene: {
-          preload: function() {
-            preload.call(this);
-          },
-          create: function() {
-            console.log('gegege', this.gridEngine)
-            create.call(this, agent);
-          },
-          update: function() {
-            update.call(this, agent, this.fieldMapTileMap);
-          },
+          preload,
+          create,
+          update,
         },
         scale: {
           width: window.innerWidth,

@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 
-export default function update(agent, fieldMapTileMap) {
+export default function update() {
   const cursors = this.input.keyboard.createCursorKeys();
 
   const addPlantKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
@@ -17,20 +17,20 @@ export default function update(agent, fieldMapTileMap) {
     const tileY = playerPosition.y;
 
     // Get the grass layer
-    const grassLayer = fieldMapTileMap.layers[0].tilemapLayer;
+    const grassLayer = this.fieldMapTileMap.layers[0].tilemapLayer;
 
     // Check if there's a grass tile at the character's position and it has the property 'plantable'
     const grassTile = grassLayer.getTileAt(tileX, tileY);
 
     if (grassTile && grassTile.properties.plantable) {
       // Check if there's no tile at the character's position in other layers
-      const noOtherTile = fieldMapTileMap.layers.every((layer, index) => {
+      const noOtherTile = this.fieldMapTileMap.layers.every((layer, index) => {
         if (index === 0) return true; // Skip the grass layer
         return !layer.tilemapLayer.hasTileAt(tileX, tileY);
       });
 
       if (noOtherTile) {
-        const { x: worldX, y: worldY } = fieldMapTileMap.tileToWorldXY(tileX, tileY);
+        const { x: worldX, y: worldY } = this.fieldMapTileMap.tileToWorldXY(tileX, tileY);
 
         const plant = this.add.sprite(worldX, worldY, "plant");
 
@@ -44,7 +44,7 @@ export default function update(agent, fieldMapTileMap) {
 
   if (removePlantKey.isDown) {
     const playerPosition = this.gridEngine.getPosition("player");
-    const { x: worldX, y: worldY } = fieldMapTileMap.tileToWorldXY(playerPosition.x, playerPosition.y);
+    const { x: worldX, y: worldY } = this.fieldMapTileMap.tileToWorldXY(playerPosition.x, playerPosition.y);
 
     // Find all overlapping plants
     const plantsToRemove = this.plantLayer.list.filter((plant) => {
@@ -59,13 +59,13 @@ export default function update(agent, fieldMapTileMap) {
   }
   
   if (cursors.left.isDown) {
-    agent.moveAndCheckCollision("left", fieldMapTileMap);
+    this.agent.moveAndCheckCollision("left", this.fieldMapTileMap);
   } else if (cursors.right.isDown) {
-    agent.moveAndCheckCollision("right", fieldMapTileMap);
+    this.agent.moveAndCheckCollision("right", this.fieldMapTileMap);
   } else if (cursors.up.isDown) {
-    agent.moveAndCheckCollision("up", fieldMapTileMap);
+    this.agent.moveAndCheckCollision("up", this.fieldMapTileMap);
   } else if (cursors.down.isDown) {
-    agent.moveAndCheckCollision("down", fieldMapTileMap);
+    this.agent.moveAndCheckCollision("down", this.fieldMapTileMap);
   }
   
 };
