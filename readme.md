@@ -1,12 +1,13 @@
 # GPTRPG
 
 ![map of the game](map.png)
+
 This repo contains two things:
 
 * A simple RPG-like environment for an LLM-enabled AI Agent to exist in
 * A simple AI Agent connected to the OpenAI API to exist in that environment
 
-It is intended as a proof of concept.  There is much more work to be done.
+It is intended as a proof of concept.
 
 ## Runing locally
 
