@@ -1,5 +1,6 @@
 # GPTRPG
 
+![map of the game](map.png)
 This repo contains two things:
 
 * A simple RPG-like environment for an LLM-enabled AI Agent to exist in
@@ -14,7 +15,6 @@ GPTRPG is intended to be run locally. To run it locally, first make sure you hav
 ## The Environment
 Code for the environment lives in the `ui-admin` directory. It is a React project.
 
-![map of the game](map.png)
 The environment was made with [Tiled](https://www.mapeditor.org/) map editor.  The files live in ui-admin/src/assets.
 
 The environment is rendered with [Phaser](https://phaser.io/) and the [Grid Engine Plugin](https://annoraaq.github.io/grid-engine/)
