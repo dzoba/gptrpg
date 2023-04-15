@@ -1,17 +1,14 @@
 import React, { useEffect, useRef } from "react";
 import Phaser from 'phaser';
 import './App.css';
-import GridEngineExtension from "./GridEngineExtension";
-
-import tileset from "./assets/v2.png"
-import mapJson from "./assets/GPTRPGMap.json"
-import characters from "./assets/characters.png"
+import GridEngine from "grid-engine";
 
 import preload from './preload';
 import create from './create';
 import update from './update';
 
-const socket = new WebSocket('ws://localhost:8080');
+import Agent from './Agent';
+const agent = new Agent();
 
 function App() {
   const gameRef = useRef(null);
@@ -19,7 +16,7 @@ function App() {
   useEffect(() => {
     if (gameRef.current === null) {
       gameRef.current = new Phaser.Game({
-        title: "GridEngineExample",
+        title: "GPTRPG",
         render: {
           antialias: false,
         },
@@ -31,7 +28,7 @@ function App() {
           scene: [
             {
               key: "gridEngine",
-              plugin: GridEngineExtension,
+              plugin: GridEngine,
               mapping: "gridEngine",
             },
           ],
@@ -41,10 +38,11 @@ function App() {
             preload.call(this);
           },
           create: function() {
-            create.call(this, socket);
+            console.log('gegege', this.gridEngine)
+            create.call(this, agent);
           },
           update: function() {
-            update.call(this, socket, this.fieldMapTileMap);
+            update.call(this, agent, this.fieldMapTileMap);
           },
         },
         scale: {

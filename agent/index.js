@@ -25,9 +25,11 @@ wss.on('connection', function connection(ws) {
       
       You have a limited set of capabilities. They are listed below:
       
-      * Move
+      * Move (up, down, left, right)
       * Wait
-      
+      * Navigate (to an x,y coordinate)
+      * Sleep
+
       # Responses
       
       You must supply your responses in the form of valid JSON objects.  Your responses will specify which of the above actions you intend to take.  The following is an example of a valid response:
@@ -60,8 +62,6 @@ wss.on('connection', function connection(ws) {
       console.error("Error processing GPT-3 response:", error);
     }
   })
-
-  ws.send('something');
 });
 
 async function callOpenAI(prompt, attempt) {

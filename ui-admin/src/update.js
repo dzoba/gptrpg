@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 
-export default function update(socket, fieldMapTileMap) {
+export default function update(agent, fieldMapTileMap) {
   const cursors = this.input.keyboard.createCursorKeys();
 
   const addPlantKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
@@ -59,13 +59,13 @@ export default function update(socket, fieldMapTileMap) {
   }
   
   if (cursors.left.isDown) {
-    this.gridEngine.moveAndCheckCollision("left", fieldMapTileMap, socket);
+    agent.moveAndCheckCollision("left", fieldMapTileMap);
   } else if (cursors.right.isDown) {
-    this.gridEngine.moveAndCheckCollision("right", fieldMapTileMap, socket);
+    agent.moveAndCheckCollision("right", fieldMapTileMap);
   } else if (cursors.up.isDown) {
-    this.gridEngine.moveAndCheckCollision("up", fieldMapTileMap, socket);
+    agent.moveAndCheckCollision("up", fieldMapTileMap);
   } else if (cursors.down.isDown) {
-    this.gridEngine.moveAndCheckCollision("down", fieldMapTileMap, socket);
+    agent.moveAndCheckCollision("down", fieldMapTileMap);
   }
   
 };
