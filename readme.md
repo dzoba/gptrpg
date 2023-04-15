@@ -11,7 +11,11 @@ It is intended as a proof of concept.
 
 ## Runing
 
-GPTRPG is intended to be run locally. To run, first make sure you have updated the `agent/.env.json` file with your OpenAI API key.  Then run `npm start` in the root directory.  This will start the agent and the front-end.  The front-end will be available at `http://localhost:3000`.
+GPTRPG is intended to be run locally. To run:
+
+1. Make sure you have updated the `agent/.env.json` file with your OpenAI API key.  
+2. In the `gptrpg` directory run `npm install` to install dependencies for all projects.
+3. Then run `npm start` in the root directory.  This will start the agent and the front-end.  The front-end will be available at `http://localhost:3000`.
 
 ## The Environment
 Code for the environment lives in the `ui-admin` directory. It is a React project.
