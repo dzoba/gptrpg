@@ -1,0 +1,14 @@
+{
+  "name": "gptrpg",
+  "version": "1.0.0",
+  "description": "This repo contains two things:",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"npm:start --prefix agent\" \"npm:start --prefix ui-admin\""
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^8.0.1"
+  }
+}
