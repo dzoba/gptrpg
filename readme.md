@@ -9,14 +9,14 @@ This repo contains two things:
 
 It is intended as a proof of concept.
 
-## Runing locally
+## Runing
 
-GPTRPG is intended to be run locally. To run it locally, first make sure you have updated the `agent/.env` file with your OpenAI API key.  Then run `npm start` in the root directory.  This will start the agent and the front-end.  The front-end will be available at `http://localhost:3000`.
+GPTRPG is intended to be run locally. To run, first make sure you have updated the `agent/.env.json` file with your OpenAI API key.  Then run `npm start` in the root directory.  This will start the agent and the front-end.  The front-end will be available at `http://localhost:3000`.
 
 ## The Environment
 Code for the environment lives in the `ui-admin` directory. It is a React project.
 
-The environment was made with [Tiled](https://www.mapeditor.org/) map editor.  The files live in ui-admin/src/assets.
+The environment was made with [Tiled](https://www.mapeditor.org/) map editor.  The files live in `ui-admin/src/assets`.
 
 The environment is rendered with [Phaser](https://phaser.io/) and the [Grid Engine Plugin](https://annoraaq.github.io/grid-engine/)
 
