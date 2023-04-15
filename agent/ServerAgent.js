@@ -1,9 +1,10 @@
 import { Configuration, OpenAIApi } from "openai";
 import extract from "extract-json-from-string";
 
+import env from "./env.json" assert { type: "json" };
 
 const configuration = new Configuration({
-  apiKey: "***REMOVED***",
+  apiKey: env.OPENAI_API_KEY,
 });
 
 const openai = new OpenAIApi(configuration);
