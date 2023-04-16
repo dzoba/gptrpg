@@ -14,6 +14,7 @@ It is intended as a proof of concept.
 GPTRPG is intended to be run locally. To run:
 
 1. Make sure you have updated the `agent/.env.json` file with your OpenAI API key.  
+2. Only tested with node 16.19.0 
 2. In the `gptrpg` directory run `npm install` to install dependencies for all projects.
 3. Then run `npm start` in the root directory.  This will start the agent and the front-end.  The front-end will be available at `http://localhost:3000`.
 
@@ -28,7 +29,7 @@ The environment consists of:
 
 * The character (agent)
 * Impassable tiles
-* A plant layer with "plantable" tiles, and plants (not currently in use by agent)
+* A plant layer with "plantable" tiles, and plants (not currently in use by agent).  Player can plant food on plantable tiles with S key and harvest food with D key.
 
 ## The Agent
 Code for the agent lives in the `agent` directory.
