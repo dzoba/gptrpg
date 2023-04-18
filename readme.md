@@ -9,7 +9,7 @@ This repo contains two things:
 
 It is intended as a proof of concept.
 
-## Runing
+## Running
 
 GPTRPG is intended to be run locally. To run:
 
