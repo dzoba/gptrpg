@@ -5,6 +5,8 @@ import env from "./env.json" assert { type: "json" };
 
 const configuration = new Configuration({
   apiKey: env.OPENAI_API_KEY,
+  basePath: `${env.OPENAI_PROXY_URL}/v1`
+
 });
 
 const openai = new OpenAIApi(configuration);
@@ -70,29 +72,29 @@ class ServerAgent {
     if (attempt > 3) {
       return null;
     }
-  
+
     if (attempt > 0) {
       prompt = "YOU MUST ONLY RESPOND WITH VALID JSON OBJECTS\N" + prompt;
     }
-  
+
     const response = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages: [{ role: "user", content: prompt }],
     });
-  
+
     console.log('OpenAI response', response.data.choices[0].message.content)
-  
+
     const responseObject = this.cleanAndProcess(response.data.choices[0].message.content);
     if (responseObject) {
       return responseObject;
     }
-  
+
     return await this.callOpenAI(prompt, attempt + 1);
   }
-  
+
   cleanAndProcess(text) {
     const extractedJson = extract(text)[0];
-  
+
     if (!extractedJson) {
       return null;
     }
