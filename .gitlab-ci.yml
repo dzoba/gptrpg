@@ -1,0 +1,41 @@
+# The Docker image that will be used to build your app
+image: openshift/origin-cli
+
+stages:
+  - deploy
+
+# Functions that should be executed before the build script is run
+deploy-agent:
+  stage: deploy
+  variables:
+    APP: gptrpg-agent-dc
+  before_script:
+    - cp agent/env.example.json agent/env.json
+    - sed -i "s/Your Key Here/$OPEN_AI_KEY/g" agent/env.json
+    - oc login --token="$OPENSHIFT_TOKEN" --server="$OPENSHIFT_SERVER"
+  script:
+    - cd agent
+    - oc get services $APP 2> /dev/null || oc new-app . --name=$APP --strategy=docker
+    - oc start-build $APP --from-dir=. --follow
+    - oc get routes $APP 2> /dev/null || oc expose service $APP
+  rules:
+    # This ensures that only pushes to the default branch will trigger
+    # a pages deploy
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+
+# ui that should be executed before the build script is run
+deploy-ui:
+  stage: deploy
+  variables:
+    APP: gptrpg-ui-dc
+  before_script:
+    - oc login --token="$OPENSHIFT_TOKEN" --server="$OPENSHIFT_SERVER"
+  script:
+    - cd ui-admin
+    - oc get services $APP 2> /dev/null || oc new-app . --name=$APP --strategy=docker
+    - oc start-build $APP --from-dir=. --follow
+    - oc get routes $APP 2> /dev/null || oc expose service $APP
+  rules:
+    # This ensures that only pushes to the default branch will trigger
+    # a pages deploy
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH

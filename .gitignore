@@ -1,4 +1,7 @@
 env.json
 out.txt
+.env
+.idea/*
+.github/**/*
 
 **/node_modules
