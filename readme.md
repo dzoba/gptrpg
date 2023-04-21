@@ -1,5 +1,3 @@
-*LOOKING FOR GPT-4 API ACCESS.  IF YOU CAN HELP PLEASE GET IN TOUCH.  @ChrisDzoba on Twitter*
-
 # GPTRPG
 
 ![map of the game](map.png)
@@ -55,6 +53,4 @@ The agent is provided with a list of possible actions, the state of its surround
 ## Notes
 
 Currently, GPTRPG runs with the `gpt-3.5-turbo` API.
-
-*LOOKING FOR GPT-4 API ACCESS.  IF YOU CAN HELP PLEASE GET IN TOUCH.  @ChrisDzoba on Twitter*
 
