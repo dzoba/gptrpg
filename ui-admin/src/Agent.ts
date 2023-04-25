@@ -3,18 +3,18 @@ import { GridEngine, Direction } from "grid-engine"
 class Agent {
   private gridEngine: GridEngine
 
-private fieldMapTileMap: Phaser.Tilemaps.Tilemap;
+  private fieldMapTileMap: Phaser.Tilemaps.Tilemap;
 
-private agent_id: string;
+  private agent_id: string;
 
-private sleepiness: number
+  private sleepiness: number
 
-private bedPosition: {
-  x: number
-  y: number
-}
+  private bedPosition: {
+    x: number
+    y: number
+  }
 
-private socket: WebSocket;
+  private socket: WebSocket;
 
   constructor(gridEngine: GridEngine, fieldMapTileMap: Phaser.Tilemaps.Tilemap, agent_id: string, bedPosition = { x: 3, y: 3 }) {
     this.gridEngine = gridEngine;
