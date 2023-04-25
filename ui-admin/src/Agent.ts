@@ -1,5 +1,22 @@
+import { GridEngine, Direction } from "grid-engine"
+
 class Agent {
-  constructor(gridEngine, fieldMapTileMap, agent_id, bedPosition = { x: 3, y: 3 }) {
+  private gridEngine: GridEngine
+
+  private fieldMapTileMap: Phaser.Tilemaps.Tilemap;
+
+  private agent_id: string;
+
+  private sleepiness: number
+
+  private bedPosition: {
+    x: number
+    y: number
+  }
+
+  private socket: WebSocket;
+
+  constructor(gridEngine: GridEngine, fieldMapTileMap: Phaser.Tilemaps.Tilemap, agent_id: string, bedPosition = { x: 3, y: 3 }) {
     this.gridEngine = gridEngine;
     this.fieldMapTileMap = fieldMapTileMap;
     this.agent_id = agent_id;
@@ -83,7 +100,11 @@ class Agent {
       right: 'walkable'
     };
   
-    const directions = [
+    const directions: { 
+      key: keyof typeof surroundings;
+      dx: -1 | 0 | 1;
+      dy: -1 | 0 | 1;
+    }[] = [
       { key: 'up', dx: 0, dy: -1 },
       { key: 'down', dx: 0, dy: 1 },
       { key: 'left', dx: -1, dy: 0 },
@@ -108,7 +129,7 @@ class Agent {
     return surroundings;
   }
 
-  moveAndCheckCollision(direction, fieldMapTileMap) {
+  moveAndCheckCollision(direction: Direction, fieldMapTileMap: Phaser.Tilemaps.Tilemap) {
     const currentPosition = this.gridEngine.getPosition(this.agent_id);
     let nextPosition = { ...currentPosition };
   

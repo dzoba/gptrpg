@@ -1,7 +1,24 @@
 import { Configuration, OpenAIApi } from "openai";
 import extract from "extract-json-from-string";
 
-import env from "./env.json" assert { type: "json" };
+import env from "./env.json";
+
+interface ParsedData {
+  agent_id: string;
+  position: {
+    x: number;
+    y: number;
+  }
+  surroundings: any;
+  sleepiness: number;
+}
+
+interface ActionResponse {
+  action: {
+    type: "move" | "wait",
+    direction?: "up" | "down" | "left" | "right"
+  }
+}
 
 const configuration = new Configuration({
   apiKey: env.OPENAI_API_KEY,
@@ -10,11 +27,13 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 class ServerAgent {
-  constructor(id) {
+  id: string;
+
+  constructor(id: string) {
     this.id = id;
   }
 
-  async processMessage(parsedData) {
+  async processMessage(parsedData: ParsedData) {
     try {
       const prompt = `# Introduction
 
@@ -66,7 +85,7 @@ class ServerAgent {
     }
   }
 
-  async callOpenAI(prompt, attempt) {
+  async callOpenAI(prompt: string, attempt: number): Promise<ActionResponse | null> {
     if (attempt > 3) {
       return null;
     }
@@ -80,9 +99,17 @@ class ServerAgent {
       messages: [{ role: "user", content: prompt }],
     });
   
-    console.log('OpenAI response', response.data.choices[0].message.content)
+    const message = response.data.choices[0].message
+
+    if (!message) {
+      console.error('Message is undefined, response: ', response)
+
+      return null
+    }
+
+    console.log('OpenAI response', message.content)
   
-    const responseObject = this.cleanAndProcess(response.data.choices[0].message.content);
+    const responseObject = this.cleanAndProcess(message.content);
     if (responseObject) {
       return responseObject;
     }
@@ -90,7 +117,7 @@ class ServerAgent {
     return await this.callOpenAI(prompt, attempt + 1);
   }
   
-  cleanAndProcess(text) {
+  cleanAndProcess(text: string) {
     const extractedJson = extract(text)[0];
   
     if (!extractedJson) {

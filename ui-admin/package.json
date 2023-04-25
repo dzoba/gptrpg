@@ -3,9 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.16.4",
-    "@testing-library/react": "^13.1.1",
-    "@testing-library/user-event": "^13.5.0",
     "grid-engine": "^2.15.0",
     "phaser": "^3.55.2",
     "react": "^18.1.0",
@@ -13,6 +10,11 @@
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4",
     "ws": "^8.13.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.1.1",
+    "@testing-library/user-event": "^13.5.0"
   },
   "scripts": {
     "start": "react-scripts start",
