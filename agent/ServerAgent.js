@@ -5,7 +5,7 @@ import env from "./env.json" assert { type: "json" };
 
 const configuration = new Configuration({
   apiKey: env.OPENAI_API_KEY,
-  basePath: `${env.OPENAI_PROXY_URL}/v1`
+  basePath: `${env.OPENAI_BASE_URL}/v1`
 
 });
 
