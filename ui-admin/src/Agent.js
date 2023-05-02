@@ -6,7 +6,7 @@ class Agent {
     this.sleepiness = 0;
     this.bedPosition = bedPosition;
     
-    const socket = new WebSocket('ws://localhost:8080');
+    const socket = new WebSocket('ws://' + process.env.REACT_APP_AGENT_HOST + ':' + process.env.REACT_APP_AGENT_PORT);
     this.socket = socket;
 
     this.socket.addEventListener('open', () => {
@@ -36,6 +36,11 @@ class Agent {
 
       if (res.type === 'nextMove') {
         const { data } = res;
+        if (res?.data?.reason) {
+          console.log(data.action.type + ': ' + res?.data?.reason);
+        }
+        if (!data)
+          return;
         switch (data.action.type) {
           case 'move':
             this.moveAndCheckCollision(data.action.direction, this.fieldMapTileMap);
